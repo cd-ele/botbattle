@@ -1,5 +1,6 @@
 import random
 from enum import Enum
+from catanatron.models.actions import ActionType
 
 
 class Color(Enum):
@@ -77,5 +78,25 @@ class RandomPlayer(Player):
 
     def decide(self, game, playable_actions):
         action = random.choice(playable_actions)
-        print(self.color, action)
+        #print(self.color, action)
         return action
+
+class PlayerPrueba(Player):
+    """
+    Player that decides at random, but skews distribution
+    to actions that are likely better (cities > settlements > dev cards).
+    """
+
+    def decide(self, game, playable_actions):
+
+        WEIGHTS_BY_ACTION_TYPE = {
+            ActionType.BUILD_CITY: 10000,
+            ActionType.BUILD_SETTLEMENT: 1000,
+            ActionType.BUY_DEVELOPMENT_CARD: 100}   
+
+        bloated_actions = []
+        for action in playable_actions:
+            weight = WEIGHTS_BY_ACTION_TYPE.get(action.action_type, 1)
+            bloated_actions.extend([action] * weight)
+
+        return random.choice(bloated_actions)
