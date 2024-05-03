@@ -79,15 +79,46 @@ class RandomPlayer(Player):
     
     def decide(self, game, playable_actions):
 
-        def filter_actions(list_to_filter, type):
-            return [action for action in list_to_filter if action.action_type == type]
+        def create_auxdic():
+            """
+            aux will be a diccionary 
+            key --> type action
+            value --> list of those actions
+            """
+            aux = {}
+            for action in playable_actions:
+                if action.action_type not in aux:
+                    aux[action.action_type] = [action]
+                else:
+                    aux[action.action_type].append(action)
+            return aux
+        
+
+        if len(playable_actions) == 1:
+            return playable_actions[0]
+
+        aux = create_auxdic()
+
+        # has knight
+        if ActionType.PLAY_KNIGHT_CARD in aux and game.state.num_turns > 100:
+            return aux[ActionType.PLAY_KNIGHT_CARD][0]
+        
+        # can build settlement?
+        if ActionType.BUILD_SETTLEMENT in aux:
+            return aux[ActionType.BUILD_SETTLEMENT][0]
+        
+        ####
+        #### insert trading
+
+        
+
+        
+
+        
+        print('='*10)
 
 
         action = random.choice(playable_actions)
-        print('='*20)
-        a = filter_actions(playable_actions, ActionType.MARITIME_TRADE)
-        if len(a) > 0:
-            print(a[0])
         return action
 
 class PlayerPrueba(Player):
