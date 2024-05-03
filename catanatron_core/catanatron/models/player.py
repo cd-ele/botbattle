@@ -85,7 +85,9 @@ class RandomPlayer(Player):
 
         action = random.choice(playable_actions)
         print('='*20)
-        print(filter_actions(playable_actions, ActionType.ACCEPT_TRADE))
+        a = filter_actions(playable_actions, ActionType.MARITIME_TRADE)
+        if len(a) > 0:
+            print(a[0])
         return action
 
 class PlayerPrueba(Player):
