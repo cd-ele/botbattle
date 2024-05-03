@@ -76,9 +76,16 @@ class HumanPlayer(Player):
 class RandomPlayer(Player):
     """Random AI player that selects an action randomly from the list of playable_actions"""
 
+    
     def decide(self, game, playable_actions):
+
+        def filter_actions(list_to_filter, type):
+            return [action for action in list_to_filter if action.action_type == type]
+
+
         action = random.choice(playable_actions)
-        #print(self.color, action)
+        print('='*20)
+        print(filter_actions(playable_actions, ActionType.ACCEPT_TRADE))
         return action
 
 class PlayerPrueba(Player):
