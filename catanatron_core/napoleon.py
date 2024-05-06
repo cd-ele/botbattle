@@ -28,25 +28,31 @@ class Napoleon(Player):
             return aux
         
 
+
         if len(playable_actions) == 1:
             return playable_actions[0]
 
         aux = create_auxdic()
+        key = player_key(game.state, self.color)
 
         if ActionType.PLAY_KNIGHT_CARD in aux:
-            print('HOLAAAAA')
+            return aux[ActionType.PLAY_KNIGHT_CARD][0]
         
+        if ActionType.BUILD_SETTLEMENT in aux:
+            return aux[ActionType.BUILD_SETTLEMENT][0]
+        # anyadir trade
+
+        if ActionType.BUILD_ROAD in aux:
+            return aux[ActionType.BUILD_ROAD][0]
+        # anyadir trade
+
+        num_sett_available = game.state.player_state[f'{key}_SETTLEMENTS_AVAILABLE']
+        if num_sett_available <= 2:
+            if ActionType.BUILD_CITY in aux:
+                return aux[ActionType.BUILD_CITY][0]
+            # anyadir trades
         
 
-
-
-
-        
-
-
-
-
-
-            
-            
+        print(playable_actions)
+        return random.choice(playable_actions)
 

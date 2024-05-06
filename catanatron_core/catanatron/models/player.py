@@ -1,7 +1,7 @@
 import random
 from enum import Enum
 from catanatron.models.actions import ActionType
-
+from catanatron.state_functions import player_key
 
 class Color(Enum):
     """Enum to represent the colors in the game"""
@@ -79,6 +79,12 @@ class RandomPlayer(Player):
     
     def decide(self, game, playable_actions):
 
+        def print_actions(actions):
+            print('='*20)
+            for a in actions:
+                print(a)
+            
+
         def create_auxdic():
             """
             aux will be a diccionary 
@@ -92,34 +98,41 @@ class RandomPlayer(Player):
                 else:
                     aux[action.action_type].append(action)
             return aux
-        
 
         if len(playable_actions) == 1:
             return playable_actions[0]
 
         aux = create_auxdic()
+        key = player_key(game.state, self.color)
 
-        # has knight
-        if ActionType.PLAY_KNIGHT_CARD in aux and game.state.num_turns > 100:
+        if ActionType.PLAY_KNIGHT_CARD in aux:
             return aux[ActionType.PLAY_KNIGHT_CARD][0]
         
-        # can build settlement?
         if ActionType.BUILD_SETTLEMENT in aux:
             return aux[ActionType.BUILD_SETTLEMENT][0]
-        
-        ####
-        #### insert trading
+        # anyadir trade
 
-        
+        if ActionType.BUILD_ROAD in aux:
+            return aux[ActionType.BUILD_ROAD][0]
+        # anyadir trade
 
-        
+        num_sett_available = game.state.player_state[f'{key}_SETTLEMENTS_AVAILABLE']
+        if num_sett_available <= 2:
+            if ActionType.BUILD_CITY in aux:
+                return aux[ActionType.BUILD_CITY][0]
+            # anyadir trades
 
-        
-        print('='*10)
+
+        if ActionType.END_TURN in aux:
+            return aux[ActionType.END_TURN][0]
+
+        if ActionType.MOVE_ROBBER in aux:
+            return aux[ActionType.MOVE_ROBBER][0]
+        return random.choice(playable_actions)
 
 
-        action = random.choice(playable_actions)
-        return action
+          
+
 
 class PlayerPrueba(Player):
     """
