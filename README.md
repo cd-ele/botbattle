@@ -1,10 +1,11 @@
 # Bot Battle
 Bienvenido a la implementación de bots de catan para nuestro proyecto de la asignatura PROJECT III :)
 
-De momento tenemos dos bots pensados: 
+We are working on three different bots.
+
 1. Miguel Ángel:
    
-Orientado a trigo y piedra para construir mayoritariamente ciudades
+This strategy focuses on city-building, as cities provide double the resources as settlements. Try to obtain wheat and ore primarily to maximize the number of cities and continually increase the amount of resources generated.
 
 2. Mary
    
@@ -19,7 +20,8 @@ Good ONLY when ALL the following are true:
 
 Do:
 - try to trade sheep all the time, if not able, trade away at 2:1 with your port.
-- as your secondary strategy, focus on cities. Don't get distracted by all that road and settlement building. You want more sheep so cities are a good idea.
+- focus on bulding your first two cities. Don't get distracted by all that road and settlement building. You want more sheep so cities are a good idea.
+- collect lots of development cards. Stay in the race to Largest Army
 - secure the most amount of sheep plus at least some of the 4 remaining resources. If you have to trade for more than one or two resources you're probably going to lose.
 
 3. Napoleon
