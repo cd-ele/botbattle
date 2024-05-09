@@ -1,7 +1,10 @@
 import random
 from catanatron.state_functions import (
     player_key,
+    get_player_freqdeck
 )
+
+
 from catanatron.models.player import Player
 from catanatron.game import Game
 from catanatron.models.actions import ActionType
@@ -12,6 +15,24 @@ class Napoleon(Player):
     Napoleon.
     """
     def decide(self, game: Game, playable_actions):
+
+        def trade_or_use_for(game, clave, construccion, aux):
+            print(f'Baraja Inicial {get_player_freqdeck(game.state, self.color)}')
+            for action in aux[clave]:
+                game_copy = game.copy()
+                game_copy.execute(action)
+                key = player_key(game_copy.state, self.color)
+                
+
+                if construccion == "city" and game_copy.state.player_state[f"{key}_WHEAT_IN_HAND"] >= 2 and game_copy.state.player_state[f"{key}_ORE_IN_HAND"] >= 3:
+                    print(f'{clave} {get_player_freqdeck(game_copy.state, self.color)}, para ciudad', {action})
+                    return action
+                if construccion == "settlement" and game_copy.state.player_state[f"{key}_WOOD_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_BRICK_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_WHEAT_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_SHEEP_IN_HAND"] >= 1: 
+                    print(f'{clave} {get_player_freqdeck(game_copy.state, self.color)}, para settlemente')
+                    return action
+                if construccion == "road" and game_copy.state.player_state[f"{key}_WOOD_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_BRICK_IN_HAND"] >= 1:
+                    print(f'{clave} {get_player_freqdeck(game_copy.state, self.color)}, para road')
+                    return action
 
         def create_auxdic():
             """
