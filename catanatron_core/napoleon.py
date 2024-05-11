@@ -61,17 +61,23 @@ class Napoleon(Player):
         
         if ActionType.BUILD_SETTLEMENT in aux:
             return aux[ActionType.BUILD_SETTLEMENT][0]
-        # anyadir trade
+        if ActionType.MARITIME_TRADE in aux:
+            can = self.trade_or_use_for(game,ActionType.MARITIME_TRADE,"settlement",aux)
+            if can is not None: return can 
 
         if ActionType.BUILD_ROAD in aux:
             return aux[ActionType.BUILD_ROAD][0]
-        # anyadir trade
+        if ActionType.MARITIME_TRADE in aux:
+            can = self.trade_or_use_for(game,ActionType.MARITIME_TRADE,"road",aux)
+            if can is not None: return can 
 
         num_sett_available = game.state.player_state[f'{key}_SETTLEMENTS_AVAILABLE']
         if num_sett_available <= 2:
             if ActionType.BUILD_CITY in aux:
                 return aux[ActionType.BUILD_CITY][0]
-            # anyadir trades
+            if ActionType.MARITIME_TRADE in aux:
+                can = self.trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux)
+                if can is not None: return can 
         
 
         print(playable_actions)

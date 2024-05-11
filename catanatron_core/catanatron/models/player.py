@@ -1,7 +1,10 @@
 import random
 from enum import Enum
 from catanatron.models.actions import ActionType
-from catanatron.state_functions import player_key
+from catanatron.state_functions import (
+    player_key,
+    get_player_freqdeck
+)
 
 class Color(Enum):
     """Enum to represent the colors in the game"""
@@ -79,11 +82,23 @@ class RandomPlayer(Player):
     
     def decide(self, game, playable_actions):
 
-        def print_actions(actions):
-            print('='*20)
-            for a in actions:
-                print(a)
-            
+        def trade_or_use_for(game, clave, construccion, aux):
+            print(f'Baraja Inicial {get_player_freqdeck(game.state, self.color)}')
+            for action in aux[clave]:
+                game_copy = game.copy()
+                game_copy.execute(action)
+                key = player_key(game_copy.state, self.color)
+                
+
+                if construccion == "city" and game_copy.state.player_state[f"{key}_WHEAT_IN_HAND"] >= 2 and game_copy.state.player_state[f"{key}_ORE_IN_HAND"] >= 3:
+                    print(f'{clave} {get_player_freqdeck(game_copy.state, self.color)}, para ciudad', {action})
+                    return action
+                if construccion == "settlement" and game_copy.state.player_state[f"{key}_WOOD_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_BRICK_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_WHEAT_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_SHEEP_IN_HAND"] >= 1: 
+                    print(f'{clave} {get_player_freqdeck(game_copy.state, self.color)}, para settlemente')
+                    return action
+                if construccion == "road" and game_copy.state.player_state[f"{key}_WOOD_IN_HAND"] >= 1 and game_copy.state.player_state[f"{key}_BRICK_IN_HAND"] >= 1:
+                    print(f'{clave} {get_player_freqdeck(game_copy.state, self.color)}, para road')
+                    return action
 
         def create_auxdic():
             """
@@ -98,6 +113,8 @@ class RandomPlayer(Player):
                 else:
                     aux[action.action_type].append(action)
             return aux
+        
+
 
         if len(playable_actions) == 1:
             return playable_actions[0]
@@ -110,25 +127,30 @@ class RandomPlayer(Player):
         
         if ActionType.BUILD_SETTLEMENT in aux:
             return aux[ActionType.BUILD_SETTLEMENT][0]
-        # anyadir trade
+        if ActionType.MARITIME_TRADE in aux:
+            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"settlement",aux)
+            if can is not None: return can 
 
         if ActionType.BUILD_ROAD in aux:
             return aux[ActionType.BUILD_ROAD][0]
-        # anyadir trade
+        if ActionType.MARITIME_TRADE in aux:
+            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"road",aux)
+            if can is not None: return can 
 
         num_sett_available = game.state.player_state[f'{key}_SETTLEMENTS_AVAILABLE']
         if num_sett_available <= 2:
             if ActionType.BUILD_CITY in aux:
                 return aux[ActionType.BUILD_CITY][0]
-            # anyadir trades
+            if ActionType.MARITIME_TRADE in aux:
+                can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux)
+                if can is not None: return can 
+        
 
-
-        if ActionType.END_TURN in aux:
-            return aux[ActionType.END_TURN][0]
-
-        if ActionType.MOVE_ROBBER in aux:
-            return aux[ActionType.MOVE_ROBBER][0]
+        print(playable_actions)
         return random.choice(playable_actions)
+
+
+
 
 
           
