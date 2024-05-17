@@ -16,6 +16,7 @@ from catanatron.state_functions import (
 )
 
 
+
 def trade_or_use_for(game, clave, construccion, aux, color):
     # # print(f'Baraja Inicial {get_player_freqdeck(game.state, self.color)}')
     for action in aux[clave]:
@@ -57,7 +58,6 @@ def get_best_node(game, action_list, resources=[]):
                 node_result = total_production[-1][1]
                 for action in action_list:
                     if node_result == action[2]:
-                        print('AHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH')
                         return action
 
         total_production = sorted([(sum(d.values()), node) for node, d in node_production.items()])
@@ -110,7 +110,7 @@ class Magnate(Player):
             if can is not None: return can
         #### HAS PLENTY CARD
         if ActionType.PLAY_YEAR_OF_PLENTY in aux:
-            can = (game,ActionType.PLAY_YEAR_OF_PLENTY,"settlement",aux)
+            can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"settlement",aux, self.color)
             if can is not None: return can
         #### HAS MONOPOLY CARD
         if ActionType.PLAY_MONOPOLY in aux:
