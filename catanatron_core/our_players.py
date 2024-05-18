@@ -15,8 +15,6 @@ from catanatron.state_functions import (
     
 )
 
-
-
 def trade_or_use_for(game, clave, construccion, aux, color):
     # # print(f'Baraja Inicial {get_player_freqdeck(game.state, self.color)}')
     for action in aux[clave]:
@@ -85,7 +83,7 @@ class Magnate(Player):
             return aux[ActionType.PLAY_KNIGHT_CARD][0]
         if ActionType.BUILD_CITY in aux:
             actions = aux[ActionType.BUILD_CITY]
-            return get_best_node(game, actions, resources=['ORE', 'WHEAT'])
+            return get_best_node(game, actions, resources=[])
         
         #### TRADEAR PARA CIUDAD
         if ActionType.MARITIME_TRADE in aux: 
@@ -102,7 +100,7 @@ class Magnate(Player):
 
         if ActionType.BUILD_SETTLEMENT in aux:
             actions = aux[ActionType.BUILD_SETTLEMENT]
-            return get_best_node(game, actions, resources=['ore', 'wheat'])
+            return get_best_node(game, actions, resources=[])
         
         #### TRADEAR PARA Poblado
         if ActionType.MARITIME_TRADE in aux: 
@@ -226,7 +224,7 @@ class Granjero(Player):
         #### CAN BUILD CITY
         if ActionType.BUILD_CITY in aux:
             actions = aux[ActionType.BUILD_CITY]
-            return get_best_node(game, actions, resources=['sheeps'])
+            return get_best_node(game, actions, resources=['SHEEP'])
         #### TRADEAR PARA Poblado
         if ActionType.MARITIME_TRADE in aux: 
             can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux, self.color)
@@ -243,7 +241,7 @@ class Granjero(Player):
 
         if ActionType.BUILD_SETTLEMENT in aux:
             actions = aux[ActionType.BUILD_SETTLEMENT]
-            return get_best_node(game, actions, resources=['sheep'])
+            return get_best_node(game, actions, resources=['SHEEP'])
                 #### TRADEAR PARA Poblado
         if ActionType.MARITIME_TRADE in aux: 
             can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"settlement",aux, self.color)
@@ -304,7 +302,7 @@ class Napoleon(Player):
         
         if ActionType.BUILD_SETTLEMENT in aux:
             actions = aux[ActionType.BUILD_SETTLEMENT]
-            return get_best_node(game, actions, resources=['lumber', 'brick'])
+            return get_best_node(game, actions, resources=['BRICK', 'WOOD'])
         if ActionType.MARITIME_TRADE in aux:
             can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"settlement",aux, self.color)
             if can is not None: return can 
@@ -319,7 +317,7 @@ class Napoleon(Player):
         if num_sett_available <= 2:
             if ActionType.BUILD_CITY in aux:
                 actions = aux[ActionType.BUILD_CITY]
-                return get_best_node(game, actions, resources=[])
+                return get_best_node(game, actions, resources=['BRICK', 'WOOD'])
             if ActionType.MARITIME_TRADE in aux:
                 can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux, self.color)
                 if can is not None: return can 

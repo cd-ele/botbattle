@@ -163,7 +163,7 @@ class EvaluateBots(SimulationAccumulator):
                         self.production[color][resource][-1] += production
             self.flag = False
     def after(self, game):
-        self.winner.append(game.winning_color().value)
+        if game.winning_color() is not None: self.winner.append(game.winning_color().value)
         
     def after_all(self):
         dfs = []
