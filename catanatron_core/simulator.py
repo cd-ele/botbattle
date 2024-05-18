@@ -19,7 +19,7 @@ import random
 
 if __name__ == '__main__':
     
-    num = 500
+    num = 50
     players_keys = ['N','0','1']
     players = []
     colors = [c for c in Color]

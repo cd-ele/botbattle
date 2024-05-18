@@ -20,7 +20,7 @@ import itertools
 
 if __name__ == '__main__':
     
-    nGames = 200
+    nGames = 50
     nPlayers = 2
     players_keys = ['N','0','1','F']
     colors = [c for c in Color]

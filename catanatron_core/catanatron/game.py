@@ -145,7 +145,6 @@ class Game:
             Action: Final action (modified to be used as Log)
         """
         player = self.state.current_player()
-        print(player)
         actions = self.state.playable_actions
 
         action = (
