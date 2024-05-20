@@ -83,7 +83,7 @@ class Magnate(Player):
             return aux[ActionType.PLAY_KNIGHT_CARD][0]
         if ActionType.BUILD_CITY in aux:
             actions = aux[ActionType.BUILD_CITY]
-            return get_best_node(game, actions, resources=[])
+            return get_best_node(game, actions, resources=['ORE', 'WHEAT'])
         
         #### TRADEAR PARA CIUDAD
         if ActionType.MARITIME_TRADE in aux: 
@@ -100,7 +100,102 @@ class Magnate(Player):
 
         if ActionType.BUILD_SETTLEMENT in aux:
             actions = aux[ActionType.BUILD_SETTLEMENT]
-            return get_best_node(game, actions, resources=[])
+            return get_best_node(game, actions, resources=['ORE', 'WHEAT'])
+        #### TRADEAR PARA Poblado
+        if ActionType.MARITIME_TRADE in aux: 
+            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"settlement",aux, self.color)
+            if can is not None: return can
+        #### HAS PLENTY CARD
+        if ActionType.PLAY_YEAR_OF_PLENTY in aux:
+            can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"settlement",aux, self.color)
+            if can is not None: return can
+        #### HAS MONOPOLY CARD
+        if ActionType.PLAY_MONOPOLY in aux:
+            can = trade_or_use_for(game,ActionType.PLAY_MONOPOLY,"settlement",aux, self.color)
+            if can is not None: return can
+
+        if ActionType.BUILD_ROAD in aux:
+            return aux[ActionType.BUILD_ROAD][0]
+        
+        #### TRADEAR PARA ROAD
+        if ActionType.MARITIME_TRADE in aux: 
+            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"road",aux, self.color)
+            if can is not None: return can
+        #### HAS PLENTY CARD
+        if ActionType.PLAY_YEAR_OF_PLENTY in aux:
+            can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"road",aux, self.color)
+            if can is not None: return can
+        #### HAS MONOPOLY CARD
+        if ActionType.PLAY_MONOPOLY in aux:
+            can = trade_or_use_for(game,ActionType.PLAY_MONOPOLY,"road",aux, self.color)
+            if can is not None: return can
+
+        if ActionType.PLAY_KNIGHT_CARD not in aux or ActionType.PLAY_YEAR_OF_PLENTY not in aux or ActionType.PLAY_MONOPOLY not in aux or ActionType.PLAY_ROAD_BUILDING not in aux:
+            # if ActionType.BUY_DEVELOPMENT_CARD in aux:
+            #     return aux[ActionType.BUY_DEVELOPMENT_CARD][0]
+            
+            ##### TRADE FOR DEV CARD
+            if ActionType.MARITIME_TRADE in aux:
+                for action in aux[ActionType.MARITIME_TRADE]:
+                    game_copy = game.copy()
+                    game_copy.execute(action)
+                    if player_can_afford_dev_card(game_copy.state,self.color):
+                        return action
+            ##### PLENTY CARD FOR DEV CARD
+            if ActionType.PLAY_YEAR_OF_PLENTY in aux:
+                for action in aux[ActionType.PLAY_YEAR_OF_PLENTY]:
+                    game_copy = game.copy()
+                    game_copy.execute(action)
+                    if player_can_afford_dev_card(game_copy.state,self.color):
+                        return action
+            ##### MONOPOLY FOR DEV CARD
+            if ActionType.PLAY_MONOPOLY in aux:
+                for action in aux[ActionType.PLAY_MONOPOLY]:
+                    game_copy = game.copy()
+                    game_copy.execute(action)
+                    if player_can_afford_dev_card(game_copy.state,self.color):
+                        return action               
+        
+        if ActionType.END_TURN in aux:
+            return aux[ActionType.END_TURN][0]
+        return random.choice(playable_actions)
+
+
+class Granjero(Player):
+    """Player that focuses on cities, ore and wheat"""
+    def decide(self, game, playable_actions):
+        if len(playable_actions) == 1:
+            return playable_actions[0]
+        # aux Diccionario De Todo Tipo de Jugadas por Tipo
+        aux = {}
+        for action in playable_actions:
+            if action.action_type not in aux:
+                aux[action.action_type] = [action]
+            else:
+                aux[action.action_type].append(action)
+        ## print(list(aux.keys()))
+        if ActionType.PLAY_KNIGHT_CARD in aux:
+            return aux[ActionType.PLAY_KNIGHT_CARD][0]
+        if ActionType.BUILD_CITY in aux:
+            actions = aux[ActionType.BUILD_CITY]
+            return get_best_node(game, actions, resources=['SHEEP', 'WHEAT'])
+        
+        #### TRADEAR PARA CIUDAD
+        if ActionType.MARITIME_TRADE in aux: 
+            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux, self.color)
+            if can is not None: return can
+        #### HAS PLENTY CARD
+        if ActionType.PLAY_YEAR_OF_PLENTY in aux:
+            can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"city",aux, self.color)
+            if can is not None: return can
+        #### HAS MONOPOLY CARD
+        if ActionType.PLAY_MONOPOLY in aux:
+            can = trade_or_use_for(game,ActionType.PLAY_MONOPOLY,"city",aux, self.color)
+            if can is not None: return can
+
+        if ActionType.BUILD_SETTLEMENT in aux:
+            actions = aux[ActionType.BUILD_SETTLEMENT]
+            return get_best_node(game, actions, resources=['SHEEP', 'WHEAT'])
         
         #### TRADEAR PARA Poblado
         if ActionType.MARITIME_TRADE in aux: 
@@ -159,112 +254,6 @@ class Magnate(Player):
         
         if ActionType.END_TURN in aux:
             return aux[ActionType.END_TURN][0]
-        
-        
-        return random.choice(playable_actions)
-    
-class Granjero(Player):
-    """Random AI player that selects an action randomly from the list of playable_actions"""
-
-    def decide(self, game, playable_actions):
-        if len(playable_actions) == 1:
-            return playable_actions[0]
-        # aux Diccionario De Todo Tipo de Jugadas por Tipo
-        aux = {}
-        for action in playable_actions:
-            if action.action_type not in aux:
-                aux[action.action_type] = [action]
-            else:
-                aux[action.action_type].append(action)
-        #print(list(aux.keys()))
-        #### HAVE KNIGHT CARD
-        if ActionType.PLAY_KNIGHT_CARD in aux:
-            return aux[ActionType.PLAY_KNIGHT_CARD][0]
-        #### HAVE LESS THAN 2 CITIES
-        if len(get_player_buildings(game.state,self.color,"CITY")) < 2:
-            ##### CAN BUILD CITY
-            if ActionType.BUILD_CITY in aux:
-                actions = aux[ActionType.BUILD_CITY]
-                return get_best_node(game, actions, resources=['SHEEP'])
-            if get_player_freqdeck(game.state, self.color)[-2] < 2 or get_player_freqdeck(game.state, self.color)[-1] < 3:
-                if ActionType.MARITIME_TRADE in aux: 
-                    can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux, self.color)
-                    if can is not None: return can
-                #### HAS PLENTY CARD
-                if ActionType.PLAY_YEAR_OF_PLENTY in aux:
-                    can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"city",aux, self.color)
-                    if can is not None: return can
-                #### HAS MONOPOLY CARD
-                if ActionType.PLAY_MONOPOLY in aux:
-                    can = trade_or_use_for(game,ActionType.PLAY_MONOPOLY,"city",aux, self.color)
-                    if can is not None: return can
-        if ActionType.BUY_DEVELOPMENT_CARD in aux:
-            return aux[ActionType.BUY_DEVELOPMENT_CARD][0]
-        ##### TRADE FOR DEV CARD
-        if ActionType.MARITIME_TRADE in aux:
-            for action in aux[ActionType.MARITIME_TRADE]:
-                game_copy = game.copy()
-                game_copy.execute(action)
-                if player_can_afford_dev_card(game_copy.state,self.color):
-                    return action
-        ##### PLENTY CARD FOR DEV CARD
-        if ActionType.PLAY_YEAR_OF_PLENTY in aux:
-            for action in aux[ActionType.PLAY_YEAR_OF_PLENTY]:
-                game_copy = game.copy()
-                game_copy.execute(action)
-                if player_can_afford_dev_card(game_copy.state,self.color):
-                    return action
-        ##### MONOPOLY FOR DEV CARD
-        if ActionType.PLAY_MONOPOLY in aux:
-            for action in aux[ActionType.PLAY_MONOPOLY]:
-                game_copy = game.copy()
-                game_copy.execute(action)
-                if player_can_afford_dev_card(game_copy.state,self.color):
-                    return action   
-        #### CAN BUILD CITY
-        if ActionType.BUILD_CITY in aux:
-            actions = aux[ActionType.BUILD_CITY]
-            return get_best_node(game, actions, resources=['SHEEP'])
-        #### TRADEAR PARA Poblado
-        if ActionType.MARITIME_TRADE in aux: 
-            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"city",aux, self.color)
-            if can is not None: return can
-        #### HAS PLENTY CARD
-        if ActionType.PLAY_YEAR_OF_PLENTY in aux:
-            can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"city",aux, self.color)
-            if can is not None: return can
-        #### HAS MONOPOLY CARD
-        if ActionType.PLAY_MONOPOLY in aux:
-            can = trade_or_use_for(game,ActionType.PLAY_MONOPOLY,"city",aux, self.color)
-            if can is not None: return can
-        #### CAN BUILD A SETTLEMENTE
-
-        if ActionType.BUILD_SETTLEMENT in aux:
-            actions = aux[ActionType.BUILD_SETTLEMENT]
-            return get_best_node(game, actions, resources=['SHEEP'])
-                #### TRADEAR PARA Poblado
-        if ActionType.MARITIME_TRADE in aux: 
-            can = trade_or_use_for(game,ActionType.MARITIME_TRADE,"settlement",aux, self.color)
-            if can is not None: return can
-        #### HAS PLENTY CARD
-        if ActionType.PLAY_YEAR_OF_PLENTY in aux:
-            can = trade_or_use_for(game,ActionType.PLAY_YEAR_OF_PLENTY,"settlement",aux, self.color)
-            if can is not None: return can
-        #### HAS MONOPOLY CARD
-        if ActionType.PLAY_MONOPOLY in aux:
-            can = trade_or_use_for(game,ActionType.PLAY_MONOPOLY,"settlement",aux, self.color)
-            if can is not None: return can
-        #### CAN BUILD A SETTLEMENTE
-        ##### HAS BUILDABLE NODES 
-
-        if len(road_building_possibilities(game.state,self.color)) == 0:
-            if ActionType.BUILD_ROAD in aux:
-                return aux[ActionType.BUILD_ROAD][0]
-
-        if ActionType.END_TURN in aux:
-            return aux[ActionType.END_TURN][0]
-        
-        
         return random.choice(playable_actions)
 
 
